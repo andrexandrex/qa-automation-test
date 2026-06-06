@@ -34,6 +34,7 @@ class BasePage:
         return self
 
     def type_text(self, locator, text):
+        text = str(text)
         element = self.visible(locator)
         self.driver.execute_script(
             "arguments[0].scrollIntoView({block: 'center'});", element
@@ -41,6 +42,22 @@ class BasePage:
         element.click()
         element.clear()
         element.send_keys(text)
+        if element.get_attribute("value") != text:
+            self.driver.execute_script(
+                """
+                const element = arguments[0];
+                const value = arguments[1];
+                const descriptor = Object.getOwnPropertyDescriptor(
+                    Object.getPrototypeOf(element),
+                    'value'
+                );
+                descriptor.set.call(element, value);
+                element.dispatchEvent(new Event('input', { bubbles: true }));
+                element.dispatchEvent(new Event('change', { bubbles: true }));
+                """,
+                element,
+                text,
+            )
         return self
 
     def get_text(self, locator):
