@@ -26,6 +26,14 @@ Por eso la configuracion separa la URL base del prefijo de API. La URL base
 representa el sitio/documentacion y el prefijo representa la version real de
 los endpoints.
 
+En GitHub Actions se puede cambiar el endpoint con la variable:
+
+    PETSTORE_API_BASE_URL
+
+El workflow usa `https://petstore3.swagger.io/api/v3` porque el servicio
+publico `/v2` puede responder 403 desde algunos runners de GitHub. La prueba es
+la misma: crear mascota, consultar por ID, actualizar y buscar por estatus.
+
 
 Instalacion
 -----------

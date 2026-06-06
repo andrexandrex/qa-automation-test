@@ -6,7 +6,7 @@ from uuid import uuid4
 import pytest
 import requests
 
-from api_tests.config import API_PREFIX, BASE_URL, DEFAULT_TIMEOUT
+from api_tests.config import API_BASE_URL, DEFAULT_TIMEOUT
 
 
 RETRY_ATTEMPTS = 5
@@ -40,9 +40,16 @@ def _unique_pet():
 def _request(method, path, **kwargs):
     return requests.request(
         method,
-        f"{BASE_URL}{API_PREFIX}{path}",
+        f"{API_BASE_URL}{path}",
         timeout=DEFAULT_TIMEOUT,
         **kwargs,
+    )
+
+
+def _assert_status(response, expected_status):
+    assert response.status_code == expected_status, (
+        f"Expected HTTP {expected_status}, got {response.status_code}. "
+        f"URL: {response.url}. Response: {response.text[:500]}"
     )
 
 
@@ -73,12 +80,12 @@ def test_petstore_pet_crud_by_id_and_status():
 
     try:
         create_response = _request("POST", "/pet", json=pet)
-        assert create_response.status_code == 200
+        _assert_status(create_response, 200)
         assert create_response.json()["id"] == pet_id
 
         def assert_pet_created():
             response = _get_pet(pet_id)
-            assert response.status_code == 200
+            _assert_status(response, 200)
             body = response.json()
             assert body["id"] == pet_id
             assert body["name"] == pet["name"]
@@ -88,13 +95,13 @@ def test_petstore_pet_crud_by_id_and_status():
         _retry_until(assert_pet_created)
 
         update_response = _request("PUT", "/pet", json=updated_pet)
-        assert update_response.status_code == 200
+        _assert_status(update_response, 200)
         assert update_response.json()["name"] == updated_pet["name"]
         assert update_response.json()["status"] == SOLD_STATUS
 
         def assert_pet_updated_by_id():
             response = _get_pet(pet_id)
-            assert response.status_code == 200
+            _assert_status(response, 200)
             body = response.json()
             assert body["id"] == pet_id
             assert body["name"] == updated_pet["name"]
@@ -105,7 +112,7 @@ def test_petstore_pet_crud_by_id_and_status():
 
         def assert_pet_found_by_status():
             response = _request("GET", "/pet/findByStatus", params={"status": SOLD_STATUS})
-            assert response.status_code == 200
+            _assert_status(response, 200)
             matching_pets = [
                 item
                 for item in response.json()

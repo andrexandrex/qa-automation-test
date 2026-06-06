@@ -16,6 +16,7 @@ jobs:
 
     env:
       HEADLESS: "true"
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
     steps:
       - name: Checkout repository
