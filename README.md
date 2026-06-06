@@ -39,10 +39,10 @@ pytest e2e_tests/test_smoke.py  # debe abrir Chrome y pasar en verde
 pytest e2e_tests/test_purchase.py
 ```
 
-Para ejecutar todas las pruebas E2E con reporte HTML:
+Para ejecutar todas las pruebas E2E con reporte HTML timestamped:
 
 ```bash
-HEADLESS=true pytest -m e2e --html=reports/e2e-report.html --self-contained-html
+HEADLESS=true pytest -m e2e
 ```
 
 La explicación de la estructura está en
@@ -54,8 +54,11 @@ La explicación de la estructura está en
 pytest -m api
 ```
 
-La explicación del CRUD de PetStore está en
+La explicación del flujo de mascotas de PetStore está en
 [`docs/phase4_api_tests.md`](docs/phase4_api_tests.md).
+
+Los reportes se generan automáticamente en `reports/e2e/`, `reports/api/` o
+`reports/all/` con formato `MM-DD-HH-MM`.
 
 Notas de depuración:
 

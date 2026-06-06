@@ -67,9 +67,12 @@ Para ejecutar Selenium sin ventana visible:
 Reportes
 --------
 
-El proyecto genera un reporte HTML automaticamente en:
+El proyecto genera reportes HTML automaticamente con nombre de suite y
+timestamp mm-dd-hora-minuto:
 
-    reports/report.html
+    reports/e2e/e2e-report-MM-DD-HH-MM.html
+    reports/api/api-report-MM-DD-HH-MM.html
+    reports/all/all-report-MM-DD-HH-MM.html
 
 Si una prueba E2E falla, tambien se guarda una captura en:
 
@@ -117,8 +120,11 @@ Notas de depuracion
 - SauceDemo usa la password publica secret_sauce. Chrome puede mostrar una
   alerta de password filtrada o insegura; esto es esperado por ser una cuenta
   demo publica.
-- PetStore es una API publica de demostracion. Por eso las pruebas usan datos
-  unicos y reintentos en las verificaciones.
+- PetStore es una API publica de demostracion. Sus endpoints REST usan el
+  prefijo /v2 aunque la pagina de documentacion sea https://petstore.swagger.io.
+  Por eso el proyecto separa BASE_URL y API_PREFIX.
+- Las pruebas API usan mascotas con datos unicos y reintentos en las
+  verificaciones.
 
 
 Comandos de checkpoint
