@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.coverage
+htmlcov/
+build/
+dist/
+
+# Entornos virtuales
+venv/
+.venv/
+env/
+
+# Caché de pytest
+.pytest_cache/
+
+# Reportes y artefactos generados en tiempo de ejecución
+reports/
+allure-results/
+*.zip
+
+# OS / editores
+.DS_Store
+.idea/
+.vscode/
+*.log
+.env

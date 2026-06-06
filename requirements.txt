@@ -1,0 +1,11 @@
+# E2E (Selenium maneja el driver automáticamente desde la v4.6 vía Selenium Manager)
+selenium>=4.18.0
+
+# Test runner
+pytest>=8.0.0
+
+# Reportes HTML (Fase 5)
+pytest-html>=4.1.0
+
+# API tests (Fase 4)
+requests>=2.31.0
