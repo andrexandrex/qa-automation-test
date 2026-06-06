@@ -12,6 +12,14 @@ from api_tests.config import API_BASE_URL, DEFAULT_TIMEOUT
 RETRY_ATTEMPTS = 5
 RETRY_DELAY_SECONDS = 1
 SOLD_STATUS = "sold"
+REQUEST_HEADERS = {
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+    "User-Agent": (
+        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
+        "(KHTML, like Gecko) Chrome/148.0 Safari/537.36"
+    ),
+}
 
 
 def _unique_pet():
@@ -38,9 +46,11 @@ def _unique_pet():
 
 
 def _request(method, path, **kwargs):
+    headers = {**REQUEST_HEADERS, **kwargs.pop("headers", {})}
     return requests.request(
         method,
         f"{API_BASE_URL}{path}",
+        headers=headers,
         timeout=DEFAULT_TIMEOUT,
         **kwargs,
     )
