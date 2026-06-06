@@ -9,6 +9,7 @@ Este archivo lo carga pytest automáticamente. Aquí vive:
 
 import os
 from datetime import datetime
+from pathlib import Path
 
 import pytest
 from selenium import webdriver
@@ -16,6 +17,44 @@ from selenium.webdriver.chrome.options import Options
 
 # Carpeta donde se guardan las capturas de fallos
 SCREENSHOTS_DIR = os.path.join(os.path.dirname(__file__), "reports", "screenshots")
+REPORTS_DIR = Path(__file__).parent / "reports"
+
+
+def _report_category(config):
+    markexpr = (getattr(config.option, "markexpr", "") or "").lower()
+    args = " ".join(str(arg).lower() for arg in config.args)
+
+    if "api" in markexpr or "api_tests" in args:
+        return "api"
+    if "e2e" in markexpr or "e2e_tests" in args:
+        return "e2e"
+    return "all"
+
+
+def _unique_report_path(category):
+    stamp = datetime.now().strftime("%m-%d-%H-%M")
+    report_dir = REPORTS_DIR / category
+    report_dir.mkdir(parents=True, exist_ok=True)
+
+    path = report_dir / f"{category}-report-{stamp}.html"
+    counter = 2
+    while path.exists():
+        path = report_dir / f"{category}-report-{stamp}-{counter}.html"
+        counter += 1
+    return path
+
+
+@pytest.hookimpl(tryfirst=True)
+def pytest_configure(config):
+    """Genera reportes HTML con nombre segun suite y timestamp."""
+    if not config.pluginmanager.hasplugin("html"):
+        return
+    if config.getoption("htmlpath"):
+        return
+
+    category = _report_category(config)
+    config.option.htmlpath = str(_unique_report_path(category))
+    config.option.self_contained_html = True
 
 
 @pytest.fixture
