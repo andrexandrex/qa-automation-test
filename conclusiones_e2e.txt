@@ -1,0 +1,33 @@
+Conclusiones E2E - SauceDemo
+============================
+
+Las pruebas E2E cubren el camino principal de compra en SauceDemo y demuestran
+que la configuracion de Selenium, pytest y Chrome funciona correctamente. El
+smoke test confirma que el navegador puede abrir la pagina y localizar el login;
+la prueba de compra valida el flujo completo hasta la confirmacion final.
+
+La decision de usar Page Object Model ayuda a que el proyecto sea mantenible.
+Los tests leen como una historia de usuario, mientras que los selectores y
+detalles de interaccion quedan centralizados en las clases de pagina. Si el
+sitio cambia un ID o una estructura visual, el ajuste deberia concentrarse en
+el Page Object correspondiente.
+
+Durante la automatizacion aparecieron detalles importantes. El campo de codigo
+postal del checkout no siempre conservaba todo el texto enviado por Selenium en
+este entorno, por lo que se agrego una verificacion del valor escrito y un
+fallback que actualiza correctamente el estado de React cuando la escritura
+normal falla.
+
+Tambien se observo que algunos botones del checkout estan cerca de una zona de
+footer fija. Esto puede volver fragiles ciertos clicks por coordenadas,
+dependiendo del tamano de ventana o del modo headless. Esa complejidad se
+resolvio dentro del Page Object para que el test no tenga que conocer ese
+detalle.
+
+Las capturas automaticas en fallos son valiosas porque muestran exactamente en
+que pantalla quedo el flujo. Esto permite distinguir si el problema fue de
+datos, de navegacion, de click, de carga de pagina o de una validacion final.
+
+Los reportes HTML con timestamp permiten conservar evidencia de cada ejecucion
+sin sobrescribir resultados anteriores. Esto es util tanto para revisiones
+locales como para descargar artefactos generados por GitHub Actions.

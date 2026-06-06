@@ -1,0 +1,28 @@
+Conclusiones API - PetStore
+===========================
+
+La prueba API valida correctamente el flujo solicitado para mascotas en
+PetStore. El escenario no se limita a revisar codigos de estado: tambien
+verifica que la informacion creada y modificada sea la que devuelve el
+servicio.
+
+Un punto importante fue separar la URL principal de PetStore del prefijo de la
+API. La pagina https://petstore.swagger.io funciona como entrada y
+documentacion, pero los endpoints REST se consumen bajo /v2. Si se intenta
+llamar directamente a /pet sin ese prefijo, el servicio responde 404 porque esa
+ruta no existe en la raiz del sitio.
+
+La prueba usa datos unicos en cada ejecucion. Esto es necesario porque PetStore
+es una API publica: otras personas o ejecuciones anteriores pueden dejar datos
+en el servicio. Usar IDs y nombres generados reduce la posibilidad de falsos
+fallos por colisiones.
+
+Tambien se agregaron reintentos en las verificaciones. La razon es que el
+servicio puede mostrar pequenas demoras entre una accion y la disponibilidad
+del dato al consultarlo. El enfoque usado mantiene las acciones principales
+claras y evita repetir operaciones como crear o actualizar; solo se repite la
+lectura hasta confirmar el resultado.
+
+El reporte HTML por timestamp ayuda a revisar historicos sin perder evidencia.
+Cada corrida API deja un archivo nuevo en reports/api/, lo que permite comparar
+resultados entre ejecuciones locales o descargas de GitHub Actions.
