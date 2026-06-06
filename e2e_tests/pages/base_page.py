@@ -30,11 +30,12 @@ class BasePage:
         return self.wait.until(EC.element_to_be_clickable(locator))
 
     def click(self, locator):
-        element = self.visible(locator)
-        self.driver.execute_script(
-            "arguments[0].scrollIntoView({block: 'center'});", element
-        )
         self.clickable(locator).click()
+        return self
+
+    def js_click(self, locator):
+        element = self.visible(locator)
+        self.driver.execute_script("arguments[0].click();", element)
         return self
 
     def type_text(self, locator, text):
