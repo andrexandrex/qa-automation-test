@@ -1,0 +1,121 @@
+"""Pruebas CRUD de mascota contra PetStore."""
+
+import time
+from uuid import uuid4
+
+import pytest
+import requests
+
+from api_tests.config import API_PREFIX, BASE_URL, DEFAULT_TIMEOUT
+
+
+RETRY_ATTEMPTS = 5
+RETRY_DELAY_SECONDS = 1
+SOLD_STATUS = "sold"
+
+
+def _unique_pet():
+    suffix = uuid4().hex[:10]
+    pet_id = int(uuid4().int % 1_000_000_000)
+    return {
+        "id": pet_id,
+        "category": {
+            "id": 1,
+            "name": "qa-category",
+        },
+        "name": f"qa-pet-{suffix}",
+        "photoUrls": [
+            "https://example.com/qa-pet.png",
+        ],
+        "tags": [
+            {
+                "id": 1,
+                "name": "qa-automation",
+            }
+        ],
+        "status": "available",
+    }
+
+
+def _request(method, path, **kwargs):
+    return requests.request(
+        method,
+        f"{BASE_URL}{API_PREFIX}{path}",
+        timeout=DEFAULT_TIMEOUT,
+        **kwargs,
+    )
+
+
+def _retry_until(assertion):
+    last_error = None
+    for _ in range(RETRY_ATTEMPTS):
+        try:
+            return assertion()
+        except AssertionError as exc:
+            last_error = exc
+            time.sleep(RETRY_DELAY_SECONDS)
+    raise last_error
+
+
+def _get_pet(pet_id):
+    return _request("GET", f"/pet/{pet_id}")
+
+
+@pytest.mark.api
+def test_petstore_pet_crud_by_id_and_status():
+    pet = _unique_pet()
+    pet_id = pet["id"]
+    updated_pet = {
+        **pet,
+        "name": f"{pet['name']}-updated",
+        "status": SOLD_STATUS,
+    }
+
+    try:
+        create_response = _request("POST", "/pet", json=pet)
+        assert create_response.status_code == 200
+        assert create_response.json()["id"] == pet_id
+
+        def assert_pet_created():
+            response = _get_pet(pet_id)
+            assert response.status_code == 200
+            body = response.json()
+            assert body["id"] == pet_id
+            assert body["name"] == pet["name"]
+            assert body["status"] == pet["status"]
+            return body
+
+        _retry_until(assert_pet_created)
+
+        update_response = _request("PUT", "/pet", json=updated_pet)
+        assert update_response.status_code == 200
+        assert update_response.json()["name"] == updated_pet["name"]
+        assert update_response.json()["status"] == SOLD_STATUS
+
+        def assert_pet_updated_by_id():
+            response = _get_pet(pet_id)
+            assert response.status_code == 200
+            body = response.json()
+            assert body["id"] == pet_id
+            assert body["name"] == updated_pet["name"]
+            assert body["status"] == SOLD_STATUS
+            return body
+
+        _retry_until(assert_pet_updated_by_id)
+
+        def assert_pet_found_by_status():
+            response = _request("GET", "/pet/findByStatus", params={"status": SOLD_STATUS})
+            assert response.status_code == 200
+            matching_pets = [
+                item
+                for item in response.json()
+                if item.get("id") == pet_id
+                and item.get("name") == updated_pet["name"]
+                and item.get("status") == SOLD_STATUS
+            ]
+            assert matching_pets
+            return matching_pets[0]
+
+        _retry_until(assert_pet_found_by_status)
+    finally:
+        _request("DELETE", f"/pet/{pet_id}")
