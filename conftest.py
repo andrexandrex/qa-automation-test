@@ -24,10 +24,14 @@ def _report_category(config):
     markexpr = (getattr(config.option, "markexpr", "") or "").lower()
     args = " ".join(str(arg).lower() for arg in config.args)
 
-    if "api" in markexpr or "api_tests" in args:
-        return "api"
-    if "e2e" in markexpr or "e2e_tests" in args:
+    if "e2e" in markexpr and "api" not in markexpr:
         return "e2e"
+    if "api" in markexpr and "e2e" not in markexpr:
+        return "api"
+    if "e2e_tests" in args and "api_tests" not in args:
+        return "e2e"
+    if "api_tests" in args and "e2e_tests" not in args:
+        return "api"
     return "all"
 
 
