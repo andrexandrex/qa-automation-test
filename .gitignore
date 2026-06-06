@@ -20,6 +20,7 @@ env/
 
 # Reportes y artefactos generados en tiempo de ejecución
 reports/
+artifacts/
 allure-results/
 *.zip
 docs/
