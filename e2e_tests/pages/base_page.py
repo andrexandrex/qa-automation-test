@@ -35,6 +35,10 @@ class BasePage:
 
     def type_text(self, locator, text):
         element = self.visible(locator)
+        self.driver.execute_script(
+            "arguments[0].scrollIntoView({block: 'center'});", element
+        )
+        element.click()
         element.clear()
         element.send_keys(text)
         return self
