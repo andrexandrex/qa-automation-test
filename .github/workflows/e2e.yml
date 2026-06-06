@@ -42,6 +42,6 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: e2e-reports
+          name: e2e-reports-${{ github.run_number }}
           path: reports/
           if-no-files-found: ignore

@@ -1,67 +1,102 @@
 # QA Automation Challenge
 
-Proyecto de automatización de pruebas para el reto técnico:
+[![API Tests](https://github.com/andrexandrex/qa-automation-test/actions/workflows/api.yml/badge.svg)](https://github.com/andrexandrex/qa-automation-test/actions/workflows/api.yml)
+[![E2E Tests](https://github.com/andrexandrex/qa-automation-test/actions/workflows/e2e.yml/badge.svg)](https://github.com/andrexandrex/qa-automation-test/actions/workflows/e2e.yml)
 
-- **E2E (Selenium + Python):** flujo de compra en [SauceDemo](https://www.saucedemo.com/).
-- **API (requests + Python):** CRUD de usuario en [PetStore](https://petstore.swagger.io/).
+Proyecto de automatización de pruebas con Python, pytest, Selenium y requests.
+Incluye pruebas E2E para SauceDemo y pruebas API para PetStore.
 
-> Repositorio en construcción por fases. La Fase 1 valida que Selenium pueda
-> abrir Chrome y cargar SauceDemo correctamente.
-
-## Estructura
-
-```
-qa-automation-challenge/
-├── conftest.py          # fixtures compartidas (driver, captura en fallo)
-├── pytest.ini           # marcadores: -m e2e / -m api
-├── requirements.txt
-├── e2e_tests/           # pruebas de interfaz (Selenium)
-│   ├── config.py
-│   ├── pages/           # Page Object Model (Fase 2)
-│   └── test_smoke.py    # verificación de entorno (Fase 1)
-└── api_tests/           # pruebas REST (Fase 4)
-    └── config.py
-```
-
-## Puesta en marcha rápida
+## Instalación
 
 ```bash
-cd qa-automation-challenge
 python -m venv venv
-source venv/bin/activate        # Windows: venv\Scripts\activate
+source venv/bin/activate
 pip install -r requirements.txt
-pytest e2e_tests/test_smoke.py  # debe abrir Chrome y pasar en verde
 ```
 
-## Fase 3 - flujo de compra E2E
+En Windows:
 
 ```bash
-pytest e2e_tests/test_purchase.py
+python -m venv venv
+venv\Scripts\activate
+pip install -r requirements.txt
 ```
 
-Para ejecutar todas las pruebas E2E con reporte HTML timestamped:
+## Ejecución Local
+
+Smoke test de Selenium:
 
 ```bash
-HEADLESS=true pytest -m e2e
+pytest e2e_tests/test_smoke.py
 ```
 
-La explicación de la estructura está en
-[`docs/phase3_e2e_purchase.md`](docs/phase3_e2e_purchase.md).
+Flujo E2E completo:
 
-## Fase 4 - pruebas API
+```bash
+pytest -m e2e
+```
+
+Pruebas API:
 
 ```bash
 pytest -m api
 ```
 
-La explicación del flujo de mascotas de PetStore está en
-[`docs/phase4_api_tests.md`](docs/phase4_api_tests.md).
+Todas las pruebas:
 
-Los reportes se generan automáticamente en `reports/e2e/`, `reports/api/` o
-`reports/all/` con formato `MM-DD-HH-MM`.
+```bash
+HEADLESS=true pytest
+```
 
-Notas de depuración:
+## Reportes Locales
 
-- Si aparece `unknown marker e2e`, ejecuta `pytest` desde la carpeta que contiene `pytest.ini`.
-- Si aparece un error de importación como `e2e_tests.config`, ejecuta `pytest` desde la raíz del proyecto.
-- Para ejecutar sin ventana visible, usa `HEADLESS=true pytest e2e_tests/test_smoke.py`.
+Los reportes HTML se generan automáticamente con timestamp:
+
+- `reports/e2e/e2e-report-MM-DD-HH-MM.html`
+- `reports/api/api-report-MM-DD-HH-MM.html`
+- `reports/all/all-report-MM-DD-HH-MM.html`
+
+Si una prueba E2E falla, se guarda una captura en `reports/screenshots/`.
+
+## Reportes En GitHub Actions
+
+Los workflows suben los reportes como artefactos descargables:
+
+1. Entra al repositorio en GitHub.
+2. Abre la pestaña `Actions`.
+3. Selecciona `API Tests` o `E2E Tests`.
+4. Abre la ejecución que quieras revisar.
+5. Baja hasta `Artifacts`.
+6. Descarga `api-reports-<run_number>` o `e2e-reports-<run_number>`.
+7. Descomprime el archivo y abre el `.html` del reporte.
+
+Los badges de arriba muestran si la última ejecución de cada workflow pasó o
+falló. El reporte HTML no se puede mostrar directamente dentro del README como
+archivo dinámico porque GitHub Actions genera artefactos por ejecución. Para
+tener un enlace público y estable al último reporte, configura GitHub Pages y
+publica los reportes desde el workflow.
+
+Configuración sugerida para GitHub Pages:
+
+1. En GitHub, ve a `Settings > Pages`.
+2. En `Build and deployment`, selecciona `GitHub Actions`.
+3. Agrega permisos `pages: write` e `id-token: write` al workflow que quieras
+   publicar.
+4. Después de correr pytest, usa `actions/upload-pages-artifact` con la carpeta
+   `reports/`.
+5. Agrega un job con `actions/deploy-pages`.
+6. Cuando Pages quede activo, puedes añadir al README un enlace como:
+
+```markdown
+[Último reporte publicado](https://andrexandrex.github.io/qa-automation-test/)
+```
+
+Para esta entrega, los reportes ya quedan disponibles como artefactos de cada
+ejecución de CI, que es la forma más simple y segura para revisión.
+
+## Documentos De Entrega
+
+- `readme_e2e.txt`: instrucciones específicas para pruebas E2E.
+- `conclusiones_e2e.txt`: hallazgos y conclusiones E2E.
+- `readme_api.txt`: instrucciones específicas para pruebas API.
+- `conclusiones_api.txt`: hallazgos y conclusiones API.

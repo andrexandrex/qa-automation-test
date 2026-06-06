@@ -31,3 +31,11 @@ jobs:
 
       - name: Run API tests
         run: pytest -m api
+
+      - name: Upload API reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-reports-${{ github.run_number }}
+          path: reports/
+          if-no-files-found: ignore
