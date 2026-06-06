@@ -33,6 +33,21 @@ pip install -r requirements.txt
 pytest e2e_tests/test_smoke.py  # debe abrir Chrome y pasar en verde
 ```
 
+## Fase 3 - flujo de compra E2E
+
+```bash
+pytest e2e_tests/test_purchase.py
+```
+
+Para ejecutar todas las pruebas E2E con reporte HTML:
+
+```bash
+HEADLESS=true pytest -m e2e --html=reports/e2e-report.html --self-contained-html
+```
+
+La explicación de la estructura está en
+[`docs/phase3_e2e_purchase.md`](docs/phase3_e2e_purchase.md).
+
 Notas de depuración:
 
 - Si aparece `unknown marker e2e`, ejecuta `pytest` desde la carpeta que contiene `pytest.ini`.
