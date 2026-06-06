@@ -47,12 +47,18 @@ class BasePage:
                 """
                 const element = arguments[0];
                 const value = arguments[1];
+                const previousValue = element.value;
                 const descriptor = Object.getOwnPropertyDescriptor(
                     Object.getPrototypeOf(element),
                     'value'
                 );
                 descriptor.set.call(element, value);
-                element.dispatchEvent(new Event('input', { bubbles: true }));
+                const tracker = element._valueTracker;
+                if (tracker) tracker.setValue(previousValue);
+                element.dispatchEvent(new InputEvent(
+                    'input',
+                    { bubbles: true, inputType: 'insertText', data: value }
+                ));
                 element.dispatchEvent(new Event('change', { bubbles: true }));
                 """,
                 element,
