@@ -29,15 +29,19 @@ class InventoryPage(BasePage):
         return self
 
     def add_product_to_cart(self, product_name):
-        self.click(self._product_button(product_name, "Add to cart"))
+        self.js_click(self._product_button(product_name, "Add to cart"))
+        self.visible(self._product_button(product_name, "Remove"))
         return self
 
     def remove_product_from_cart(self, product_name):
-        self.click(self._product_button(product_name, "Remove"))
+        self.js_click(self._product_button(product_name, "Remove"))
+        self.visible(self._product_button(product_name, "Add to cart"))
         return self
 
     def open_cart(self):
-        return self.click(self.SHOPPING_CART_LINK)
+        self.js_click(self.SHOPPING_CART_LINK)
+        self.wait_for_url_contains("cart.html")
+        return self
 
     def cart_badge_count(self):
         return int(self.get_text(self.CART_BADGE))

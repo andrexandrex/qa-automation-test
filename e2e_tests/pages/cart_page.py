@@ -23,14 +23,18 @@ class CartPage(BasePage):
         return [item.text for item in self.find_all(self.ITEM_NAMES)]
 
     def remove_product(self, product_name):
-        self.click(self._remove_button(product_name))
+        self.js_click(self._remove_button(product_name))
         return self
 
     def continue_shopping(self):
-        return self.click(self.CONTINUE_SHOPPING_BUTTON)
+        self.js_click(self.CONTINUE_SHOPPING_BUTTON)
+        self.wait_for_url_contains("inventory.html")
+        return self
 
     def checkout(self):
-        return self.click(self.CHECKOUT_BUTTON)
+        self.js_click(self.CHECKOUT_BUTTON)
+        self.wait_for_url_contains("checkout-step-one.html")
+        return self
 
     def _remove_button(self, product_name):
         product = self.xpath_literal(product_name)

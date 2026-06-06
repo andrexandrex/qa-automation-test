@@ -37,7 +37,9 @@ class CheckoutPage(BasePage):
         return self
 
     def continue_to_overview(self):
-        return self.js_click(self.CONTINUE_BUTTON)
+        self.js_click(self.CONTINUE_BUTTON)
+        self.wait_for_url_contains("checkout-step-two.html")
+        return self
 
     def cancel(self):
         return self.js_click(self.CANCEL_BUTTON)
@@ -52,7 +54,9 @@ class CheckoutPage(BasePage):
         return [item.text for item in self.find_all(self.SUMMARY_ITEM_NAMES)]
 
     def finish(self):
-        return self.js_click(self.FINISH_BUTTON)
+        self.js_click(self.FINISH_BUTTON)
+        self.wait_for_url_contains("checkout-complete.html")
+        return self
 
     def is_complete_step_loaded(self):
         return self.visible(self.COMPLETE_CONTAINER).is_displayed()
@@ -61,4 +65,6 @@ class CheckoutPage(BasePage):
         return self.get_text(self.COMPLETE_HEADER)
 
     def back_home(self):
-        return self.js_click(self.BACK_HOME_BUTTON)
+        self.js_click(self.BACK_HOME_BUTTON)
+        self.wait_for_url_contains("inventory.html")
+        return self

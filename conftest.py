@@ -100,3 +100,5 @@ def pytest_runtest_makereport(item, call):
             path = os.path.join(SCREENSHOTS_DIR, f"{item.name}_{stamp}.png")
             drv.save_screenshot(path)
             print(f"\n[captura guardada] {path}")
+            print(f"[url actual] {drv.current_url}")
+            print(f"[titulo actual] {drv.title}")
