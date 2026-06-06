@@ -24,6 +24,15 @@ dependiendo del tamano de ventana o del modo headless. Esa complejidad se
 resolvio dentro del Page Object para que el test no tenga que conocer ese
 detalle.
 
+En GitHub Actions aparecio otro comportamiento importante: Selenium reportaba
+que ciertos clicks se habian ejecutado, pero la aplicacion no cambiaba de
+estado. El reporte y la captura mostraron que el flujo seguia en la pagina de
+productos cuando el test ya esperaba estar en el carrito. Para hacerlo mas
+confiable se agregaron verificaciones despues de las acciones principales: al
+agregar un producto se espera que el boton cambie a Remove; al abrir el carrito
+se espera la URL de cart; al iniciar checkout se espera la URL del primer paso;
+y al finalizar se espera la pagina de confirmacion.
+
 Las capturas automaticas en fallos son valiosas porque muestran exactamente en
 que pantalla quedo el flujo. Esto permite distinguir si el problema fue de
 datos, de navegacion, de click, de carga de pagina o de una validacion final.
@@ -31,3 +40,9 @@ datos, de navegacion, de click, de carga de pagina o de una validacion final.
 Los reportes HTML con timestamp permiten conservar evidencia de cada ejecucion
 sin sobrescribir resultados anteriores. Esto es util tanto para revisiones
 locales como para descargar artefactos generados por GitHub Actions.
+
+La conclusion principal del lado E2E es que una prueba estable no debe asumir
+que un click fue exitoso solo porque Selenium no lanzo error. La prueba debe
+comprobar el cambio visible o navegacional que ese click tenia que producir.
+Ese enfoque hizo que el flujo pasara tanto localmente como en la rama de
+correccion ejecutada en GitHub Actions.
