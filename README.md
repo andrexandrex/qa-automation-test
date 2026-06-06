@@ -48,6 +48,15 @@ HEADLESS=true pytest -m e2e --html=reports/e2e-report.html --self-contained-html
 La explicación de la estructura está en
 [`docs/phase3_e2e_purchase.md`](docs/phase3_e2e_purchase.md).
 
+## Fase 4 - pruebas API
+
+```bash
+pytest -m api
+```
+
+La explicación del CRUD de PetStore está en
+[`docs/phase4_api_tests.md`](docs/phase4_api_tests.md).
+
 Notas de depuración:
 
 - Si aparece `unknown marker e2e`, ejecuta `pytest` desde la carpeta que contiene `pytest.ini`.
