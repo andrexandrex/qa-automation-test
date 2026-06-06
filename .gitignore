@@ -3,9 +3,12 @@ __pycache__/
 *.py[cod]
 *.egg-info/
 .coverage
+coverage.xml
 htmlcov/
 build/
 dist/
+.mypy_cache/
+.ruff_cache/
 
 # Entornos virtuales
 venv/
