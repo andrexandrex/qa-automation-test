@@ -18,6 +18,15 @@ evitar que la validacion dependa de una restriccion de infraestructura externa,
 el workflow permite sobrescribir la URL de API y usa el endpoint compatible
 https://petstore3.swagger.io/api/v3. El escenario funcional se mantiene igual.
 
+Despues de revisar un reporte mas reciente, se confirmo que el bloqueo no
+dependia solamente de la version del endpoint. GitHub Actions tambien recibia
+403 al usar el endpoint v3. La causa mas probable era que el servicio rechazaba
+peticiones con la firma por defecto de python-requests desde los runners de
+GitHub. Por eso se agregaron headers explicitos de cliente HTTP, incluyendo
+Accept, Content-Type y un User-Agent similar al de un navegador. Con ese ajuste
+la prueba API paso correctamente en la rama de correccion creada para validar
+el problema antes de mezclarlo a main.
+
 La prueba usa datos unicos en cada ejecucion. Esto es necesario porque PetStore
 es una API publica: otras personas o ejecuciones anteriores pueden dejar datos
 en el servicio. Usar IDs y nombres generados reduce la posibilidad de falsos
@@ -32,3 +41,11 @@ lectura hasta confirmar el resultado.
 El reporte HTML por timestamp ayuda a revisar historicos sin perder evidencia.
 Cada corrida API deja un archivo nuevo en reports/api/, lo que permite comparar
 resultados entre ejecuciones locales o descargas de GitHub Actions.
+
+La conclusion principal del lado API es que, al trabajar contra servicios
+publicos de demostracion, no basta con validar que el endpoint funcione desde
+la maquina local. Tambien hay que observar como responde desde CI, porque los
+runners compartidos pueden ser tratados de forma distinta por el servidor. El
+proyecto quedo preparado para eso mediante configuracion por variable de
+entorno, mensajes de error mas descriptivos y reportes descargables desde
+GitHub Actions.
