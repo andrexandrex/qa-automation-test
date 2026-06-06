@@ -86,6 +86,44 @@ fixed footer area that can be flaky with coordinate-based Selenium clicks in
 some browser/window combinations. Other page clicks still use normal Selenium
 clicks.
 
+## Manual QA findings and persistent issues
+
+These are the most relevant issues noticed while manually exercising and
+debugging the Phase 3 flow. They are useful to keep in mind when reviewing a
+failed run, because not every failure means the business flow is broken.
+
+- Chrome may show a password/data-breach warning for the public SauceDemo
+  password `secret_sauce`. This is not a SauceDemo checkout defect; it happens
+  because the exercise uses a well-known shared demo password. In manual runs it
+  can distract from the login step or cover part of the browser UI. The
+  automated test still uses the official challenge credentials from
+  `e2e_tests/config.py`.
+- The checkout postal-code field was the most persistent automation issue.
+  During local runs, Selenium sometimes focused the field but dropped part or
+  all of the typed value. The visible symptom was that checkout stayed on
+  `Checkout: Your Information` instead of advancing to overview.
+- A plain JavaScript value assignment was not enough for checkout fields because
+  SauceDemo is a React app. The value could appear on screen, but React state
+  did not always update, so clicking `Continue` behaved as if the postal code
+  was still empty. The fix dispatches input/change events and updates React's
+  value tracker only after normal Selenium typing fails.
+- The `Continue` and `Finish` buttons live near a fixed footer area. In some
+  browser/window positions, coordinate-based Selenium clicks did not trigger the
+  button even when it was visible. The checkout Page Object uses `js_click()`
+  for those footer actions, while the rest of the app still uses normal
+  Selenium clicks.
+- Failure screenshots were essential for separating real flow failures from
+  automation mechanics. For example, screenshots showed whether the test was
+  still on the information form, had reached checkout overview, or was blocked
+  near the footer controls.
+- Window size and headless mode can change how SauceDemo lays out the checkout
+  footer. The project uses a fixed `1280x800` browser size and supports
+  `HEADLESS=true` so local and CI runs behave as consistently as possible.
+- The final assertion intentionally checks only the completion message:
+  `THANK YOU FOR YOUR ORDER!`. Earlier steps are still necessary to reach that
+  state, but the test stays focused on the business outcome instead of adding
+  many intermediate assertions that could make the flow brittle.
+
 ## Phase 3 checkpoint
 
 Run:
